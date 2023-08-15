@@ -16,6 +16,9 @@ jobs:
   debian-docker:
     name: Debian Docker
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dimension: [1, 2, 3, RZ]
     permissions:
       contents: read
       packages: write
@@ -49,6 +52,9 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=sha
+          flavor: |
+            latest=auto
+            prefix=${{ matrix.dimension }}-
 
       - name: Build and push Docker image
         id: build-and-push
@@ -60,5 +66,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: WARPX_DIM=${{ matrix.dimension }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

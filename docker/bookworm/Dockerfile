@@ -11,8 +11,5 @@ RUN apt-get update && \
 COPY . /warpx
 
 RUN GIT_SSL_NO_VERIFY=1 cmake -S . -B build -DWarpX_DIMS=$WARPX_DIM ${WARPX_CONFIGURE_OPTIONS} && \
-    cmake --build build -j 4
-
-WORKDIR /app
-
-ENTRYPOINT [ "/warpx/build/bin/warpx" ]
+    cmake --build build -j 4 && \
+    pip install --break-system-packages -e /warpx/Python/
